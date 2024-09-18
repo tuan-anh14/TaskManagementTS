@@ -4,6 +4,7 @@ import Task from "../models/task.model";
 import paginationHelper from "../../../helpers/pagination";
 import searchHelper from "../../../helpers/search";
 
+//[GET] /tasks
 export const index = async (req: Request, res: Response) => {
   // Find
   interface Find {
@@ -36,12 +37,12 @@ export const index = async (req: Request, res: Response) => {
     limitItems: 2,
   };
 
-    const countTasks = await Task.countDocuments(find);
-    const objectPagination = paginationHelper(
-      initPagination,
-      req.query,
-      countTasks
-    );
+  const countTasks = await Task.countDocuments(find);
+  const objectPagination = paginationHelper(
+    initPagination,
+    req.query,
+    countTasks
+  );
 
   //End Pagination
 
@@ -62,6 +63,7 @@ export const index = async (req: Request, res: Response) => {
   res.json(tasks);
 };
 
+// [GET] /tasks/detail/:id
 export const detail = async (req: Request, res: Response) => {
   const id = req.params.id;
 
@@ -71,4 +73,31 @@ export const detail = async (req: Request, res: Response) => {
   });
 
   res.json(task);
+};
+
+// [PATCH] /tasks/change-status/:id
+export const changeStatus = async (req: Request, res: Response) => {
+  try {
+    const id: string = req.params.id;
+    const status: string = req.body.status;
+
+    await Task.updateOne(
+      {
+        _id: id,
+      },
+      {
+        status: status,
+      }
+    );
+
+    res.json({
+      code: 200,
+      message: "Cập nhật trạng thái thành công !",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Không tồn tại !",
+    });
+  }
 };
