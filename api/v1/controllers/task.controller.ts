@@ -130,6 +130,23 @@ export const changeMulti = async (req: Request, res: Response) => {
         });
         break;
 
+      case "delete":
+        await Task.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: true,
+            deletedAt: new Date(),
+          }
+        );
+
+        res.json({
+          code: 200,
+          message: "Xoá thành công !",
+        });
+        break;
+
       default:
         res.json({
           code: 400,
