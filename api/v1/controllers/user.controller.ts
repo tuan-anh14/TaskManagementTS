@@ -4,6 +4,10 @@ import User from "../models/user.model";
 
 import { generateRandomString } from "../../../helpers/generate";
 
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
+
 // [POST] /api/v1/users/register
 export const register = async (req: Request, res: Response) => {
   req.body.password = md5(req.body.password);
@@ -84,20 +88,11 @@ export const login = async (req: Request, res: Response) => {
   });
 };
 
-// [GET] /api/v1/users/detail/:id
-export const detail = async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-
-  const user = await User.findOne({
-    _id: id,
-    deleted: false,
-  }).select("-password -token");
-
-  console.log(user);
-
+// [GET] /api/v1/users/detail
+export const detail = async (req: AuthenticatedRequest, res: Response) => {
   res.json({
     code: 200,
     message: "Thành công!",
-    info: user,
+    info: req.user,
   });
 };
